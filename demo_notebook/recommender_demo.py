@@ -2,9 +2,7 @@ import pandas as pd
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pickle
-import time
 import streamlit as st
-import random
 
 # Initialize Spotify API
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
@@ -36,8 +34,8 @@ def select_track(tracks_df):
     track_number = st.selectbox('Please select the number of the song:', tracks_df['number'])
     st.write("")  # Add space for clarity
     if st.button('Confirm'):
-        track_id = tracks_df.loc[tracks_df['number'] == track_number, 'track_id'].iloc[0]
-        return track_id
+        st.session_state.track_id = tracks_df.loc[tracks_df['number'] == track_number, 'track_id'].iloc[0]
+        return st.session_state.track_id
     else:
         return None  # Return None if "Confirm" button is not clicked
 
@@ -84,37 +82,55 @@ def random_recommendation(user_cluster):
     return tracks_recommendation.sample(n=3).reset_index(drop=True)
 
 
-random.seed()
 def recommendation(user_cluster):
-    while True:
-        tracks_recommendation_random = random_recommendation(user_cluster)
-        st.write("Recommended tracks:")
-        st.dataframe(tracks_recommendation_random[['artist_name', 'track_name']])
-        
-        # Generate unique keys using random numbers
-        unique_key_satisfied = f"satisfied_with_recommendations_{random.randint(1, 1000000)}"
-        unique_key_new = f"get_new_recommendations_{random.randint(1, 1000000)}"
-        
-        if st.button('Satisfied with recommendations', key=unique_key_satisfied):
-            break  # Exit the loop if the user is satisfied
-        if st.button('Get new recommendations', key=unique_key_new):
-            # Sleep to ensure unique keys on rapid button presses
-            time.sleep(1)
-            continue
-    return tracks_recommendation_random
+    # Initialize or maintain the state for recommendations
+    if 'recommendation_index' not in st.session_state:
+        st.session_state.recommendation_index = 0
+
+    # Fetch new recommendations
+    tracks_recommendation_random = random_recommendation(user_cluster)
+    st.write("Recommended tracks:")
+    st.dataframe(tracks_recommendation_random[['artist_name', 'track_name']])
+
+    # Embed each track using Spotify's iframe
+    for index, row in tracks_recommendation_random.iterrows():
+        track_url = f"https://open.spotify.com/embed/track/{row['track_id']}?utm_source=generator"
+        st.components.v1.iframe(track_url, width=320, height=80)
+
+    # Button for confirming satisfaction with recommendations
+    if st.button('Satisfied with recommendations'):
+        st.session_state.show_start_over = True  # Set flag to show "Start Over" button
+
+        if 'show_start_over' in st.session_state and st.session_state.show_start_over:
+            if st.button('Start Over', key='start_over_after_satisfaction'):
+                st.session_state.clear()  # Clear the session state to reset all stored variables
+                st.experimental_rerun()  # Rerun the app from the beginning
+
+    elif st.button('Get new recommendations'):
+        # Fetch and display new recommendations
+        st.session_state.recommendation_index += 1  # Update the state for new recommendations
+        st.experimental_rerun()  # Optionally rerun to refresh recommendations
 
 
 # Initialize the app
 def main():
-    st.title('Music Recommender System')
+    st.title('Spotify Music Recommender System')
+
+    # Place the "Start Again" button at the top of the page
+    if st.button('Start Again'):
+        st.session_state.clear()  # Clear all session state
+        st.experimental_rerun()  # Rerun the application from the beginning
+
+    # Continue with the rest of your app
     song = st.text_input('Please write a song that you like:', key='song_input')
     if song:
         tracks_df = find_song(song)
         if not tracks_df.empty:
-            track_id = select_track(tracks_df)
-            if track_id:
-                embed_track(track_id)
-                user_features = user_track_features(track_id)
+            if 'track_id' not in st.session_state or st.session_state.track_id is None:
+                st.session_state.track_id = select_track(tracks_df)
+            if st.session_state.track_id:
+                embed_track(st.session_state.track_id)
+                user_features = user_track_features(st.session_state.track_id)
                 user_cluster = user_predict_km100(user_features)
                 if st.button('Get Recommendations'):
                     recommendation(user_cluster)
