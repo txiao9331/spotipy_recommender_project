@@ -32,10 +32,6 @@ This project is a web application designed to provide personalized music recomme
 - Streamlit
 - Spotify API
 
-## Feedback
-
-We welcome any feedback or suggestions for improvement! Feel free to open an issue or submit a pull request.
-
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
