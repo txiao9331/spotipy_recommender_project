@@ -87,7 +87,7 @@ def user_predict_km100(user_features):
     return user_cluster
 
 def random_recommendation(user_cluster):
-    tracks_clustered_df = pd.read_csv('../spotipy_data/tracks_clustered_df2.csv')
+    tracks_clustered_df = pd.read_csv('spotipy_data/tracks_clustered_df2.csv')
     tracks_recommendation = tracks_clustered_df[tracks_clustered_df['cluster_km100'] == user_cluster]
     return tracks_recommendation.sample(n=3).reset_index(drop=True)
 
