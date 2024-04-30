@@ -77,9 +77,9 @@ def user_track_features(track_id):
     return user_features
 
 def user_predict_km100(user_features):
-    with open('../spotipy_data/model_km100.pickle', 'rb') as handle:
+    with open('spotipy_data/model_km100.pickle', 'rb') as handle:
         km100 = pickle.load(handle)
-    with open('../spotipy_data/scaler.pickle', 'rb') as handle:
+    with open('spotipy_data/scaler.pickle', 'rb') as handle:
         scaler = pickle.load(handle)
 
     scaled_features = scaler.transform(user_features)
