@@ -5,7 +5,7 @@ import datetime
 from PIL import Image
 
 
-import notebooks.melo_func as mf
+import melo_func as mf
 
 
 # with st.sidebar:
