@@ -122,6 +122,20 @@ def recommendation(user_cluster):
         st.rerun()  # Optionally rerun to refresh recommendations
 
 
+# Define a function to apply gradient background color to the sidebar
+def set_sidebar_style():
+    st.markdown("""
+        <style>
+            .sidebar .sidebar-content {
+                background-image: linear-gradient(to bottom, #00b300, #009900); /* Adjust gradient colors as per your preference */
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+# Call the function to apply the gradient background color
+set_sidebar_style()
+
+
 # Initialize the app
 def main():
     st.title('Spotify Music Recommender System')
@@ -130,9 +144,11 @@ def main():
     if st.button('Start Again'):
         st.session_state.clear()  # Clear all session state
         st.rerun()  # Rerun the application from the beginning
-
+    # Insert Spotify logo in sidebar
+    st.sidebar.image("img/Spotify_Logo_CMYK_Green.png", use_column_width=True, width=100)
+    st.sidebar.header('Start from here!')
     # Continue with the rest of your app
-    song = st.text_input('Please write a song that you like:', key='song_input')
+    song = st.sidebar.text_input('Please write a song that you like:', key='song_input')
     if song:
         tracks_df = find_song(song)
         if not tracks_df.empty:
