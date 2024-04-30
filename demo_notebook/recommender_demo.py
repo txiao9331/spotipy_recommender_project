@@ -104,12 +104,12 @@ def recommendation(user_cluster):
         if 'show_start_over' in st.session_state and st.session_state.show_start_over:
             if st.button('Start Over', key='start_over_after_satisfaction'):
                 st.session_state.clear()  # Clear the session state to reset all stored variables
-                st.experimental_rerun()  # Rerun the app from the beginning
+                st.rerun()  # Rerun the app from the beginning
 
     elif st.button('Get new recommendations'):
         # Fetch and display new recommendations
         st.session_state.recommendation_index += 1  # Update the state for new recommendations
-        st.experimental_rerun()  # Optionally rerun to refresh recommendations
+        st.rerun()  # Optionally rerun to refresh recommendations
 
 
 # Initialize the app
@@ -119,7 +119,7 @@ def main():
     # Place the "Start Again" button at the top of the page
     if st.button('Start Again'):
         st.session_state.clear()  # Clear all session state
-        st.experimental_rerun()  # Rerun the application from the beginning
+        st.rerun()  # Rerun the application from the beginning
 
     # Continue with the rest of your app
     song = st.text_input('Please write a song that you like:', key='song_input')
