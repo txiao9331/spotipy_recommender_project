@@ -1,0 +1,10 @@
+numpy
+spotipy
+matplotlib
+requests
+streamlit
+beautifulsoup4
+ipykernel
+pandas
+os
+json
