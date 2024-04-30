@@ -1,11 +1,21 @@
 import pandas as pd
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import pickle
 import streamlit as st
 
 # Initialize Spotify API
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials())
+
+# Fetch client ID and client secret from environment variables
+client_id = os.getenv('SPOTIPY_CLIENT_ID')
+client_secret = os.getenv('SPOTIPY_CLIENT_SECRET')
+
+if not client_id or not client_secret:
+    raise Exception("Please set the SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET environment variables.")
+
+auth_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+sp = spotipy.Spotify(auth_manager=auth_manager)
 
 def find_song(song):
     if 'offset' not in st.session_state:
