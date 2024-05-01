@@ -3,7 +3,7 @@
 
 🎵 Welcome to our Spotify Music Recommender! 🎧
 
-This project is a web application designed to provide personalized music recommendations based on your Spotify listening history.
+This project is a web application designed to provide personalized music recommendations based on your love song.
 
 ## Features
 
